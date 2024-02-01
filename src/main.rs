@@ -4,7 +4,6 @@ use std::io::Read;
 use crate::encdec::magic;
 
 mod encdec;
-mod main_old;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
