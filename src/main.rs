@@ -1,6 +1,6 @@
 use std::{env, fs};
 use std::fs::File;
-use std::io::Read;
+use std::io::{Read, Write};
 use crate::encdec::magic;
 
 mod encdec;
@@ -10,30 +10,32 @@ fn main() {
     if args.len() != 5 {
         panic!("Wrong number of args!")
     }
-    let end_or_dec = args[1].clone(); // -e gia encrypt
-    // let file_or_str = &args[2]; //-f gia arxeio
+    let enc = args[1].clone();
+    let path = args[2].clone();
+    let pass = args[4].clone();
+    let encrypt: bool = enc.eq("-e");
 
-    let input = args[2].clone();
+    let cr_f_name = if (encrypt) { path.clone() + ".cr.min"} else { path.clone() + "dec"};
+
  //   let octades = Vec::from(input);
-    let metadata = fs::metadata("/home/georgem/RustroverProjects/crypto-min/target/debug/primenumbers").expect("unable to read metadata");
+    let metadata = fs::metadata(path.clone()).expect("unable to read metadata");
     let mut buffer = vec![0; metadata.len() as usize];
-     File::open("/home/georgem/RustroverProjects/crypto-min/target/debug/primenumbers").unwrap().read(&mut *buffer).expect("TODO: panic message");
+     File::open(path.clone()).unwrap().read(&mut *buffer).expect("TODO: panic message");
     let octades = buffer.to_vec();
 
-    let pass = args[4].clone();
-    println!("p {}", pass);
-    let v = Vec::from(pass);
-    let t = calculate_T_value(&v);
-    let bv = magic(&v, &octades, &t, true);
-    let p = magic(&v, &bv, &t, false);
-    let rr = p.len();
 
-    println!("{:?}", String::from_utf8(octades));
-    println!("{:?}", String::from_utf8(p));
+    let passvec = Vec::from(pass);
+    let t = calculate_T_value(&passvec);
+    let result_vector = magic(&passvec, &octades, &t, encrypt);
+
+    let mut f = File::create(cr_f_name).unwrap();
+    f.write(&result_vector).expect("TODO: panic message");
+
+
 }
 
 // T = first bit of password XOR last, if the password has an odd number of characters. Otherwise T = first_bit XNOR last_bit.
-fn calculate_T_value(given_password: &Vec<u8>) -> u8 {
+pub fn calculate_T_value(given_password: &Vec<u8>) -> u8 {
     let r = given_password.len();
     let mut t: u8 = 0;
 

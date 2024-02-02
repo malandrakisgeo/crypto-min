@@ -1,5 +1,4 @@
-
-
+use crate::calculate_T_value;
 
 fn initial_rotation(r: u8) -> bool { //TODO: Make it more complex
     return r < 200;
@@ -68,4 +67,17 @@ pub fn magic(given_password: &Vec<u8>, input: &Vec<u8>, t: &u8, encryption: bool
     });
 
     return res_vec;
+}
+
+
+#[test]
+fn it_works() {
+    let input = Vec::from("Encrypt me!");
+    let pass = Vec::from("123");
+    let t = calculate_T_value(&pass);
+    let encrypted = magic(&pass, &input, &t, true);
+    let decrypted = magic(&pass, &encrypted, &t, false);
+    assert_ne!(input, encrypted);
+    assert_eq!(input, decrypted);
+
 }

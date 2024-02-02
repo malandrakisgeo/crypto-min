@@ -18,10 +18,20 @@ Here is a verbal description of the algorithm.
              We XOR the second char of the password with T, and use the resulting number of 1s to rotate the second char of the input.
              e.t.c
 
-There is a TODO of optimizing it by working with four bytes at once instead of one.
+TODO: If one encrypts plain text with this algorithm and the attackers know it, 
+it is trivial for them to brute force the first bytes and see if anything meaningful is produced, 
+possibly revealing the password if not complex enough. A form of password-derived padding shall be added periodically 
+in the textfile (total extra size no more than 5% of the original), including 
+the beginning and the end, and encrypted along with the rest of the file to make it harder to attack.
 
 
-TODO: If one encrypts plain text with this algorithm and the attackers know it, it is trivial for them to brute force the first bytes and see if anything meaningful is produced, possibly revealing the password if not complex enough. A form of password-derived padding shall be added periodically in the encrypted file (but no more than 10%-15% of it) to make it harder to attack.
+The algorithm has no official name, but if I had to give it one, that would be SYNTOM (from the Greek word 'syntomos' (=quick/brief) ). 
 
+## Running
+Encrytion: run --package crypto-min --bin crypto-min -- -e {path_to_unencrypted_file} -p {password}
+Decryption: run --package crypto-min --bin crypto-min -- -d {path_to_encrypted_file} -p {password}
 
-The algorithm has no official name, but if I had to give it one, that would be SYNTOM (from the Greek word 'syntomos' (=fast, quick). 
+### TODOs
+1. Add a flag enabling double encryption. 
+2. Strengthen the encryption key by default. E.g. if someone gives a password of less than 5 characters, append its' reverse to the end, or some bytes derived from the pass.
+3. Add padding (see above)
