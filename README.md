@@ -21,4 +21,5 @@ Here is a verbal description of the algorithm.
 There is a TODO of optimizing it by working with four bytes at once instead of one.
 
 
+TODO: If one encrypts plain text with this algorithm and the attackers know it, it is trivial for them to brute force the first bytes and see if anything meaningful is produced, possibly revealing the password if not complex enough. A form of password-derived padding shall be added periodically in the encrypted file (but no more than 10%-15% of it) to make it harder to attack.
 
