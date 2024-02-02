@@ -11,7 +11,7 @@ Here is a verbal description of the algorithm.
         Let T the result of this operation.
         T is a byte treated as a three-digit integer between 000-255.
         The first digit defines whether the first rotation is to the left (0 or 1), or to the right (2).
-        The second digit defines the number of successive rotations to the right. The third the number
+        The second digit defines the number of successive rotations to the right. The third, the number
         of rotations to the left.
 3. The bytes of the input are rotated to the right or the left, for as many bits as the "ones" of the password bytes XOR T.
         i.e. We XOR the first char of the password with T, and use the resulting number of 1s to rotate the first char of the input.
