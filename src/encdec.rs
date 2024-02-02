@@ -28,7 +28,7 @@ pub fn magic(given_password: &Vec<u8>, input: &Vec<u8>, t: &u8, encryption: bool
     println!("r: {}", t);
 
     input.iter().for_each(|byte| {
-        let n: u8 = given_password.get(cur_pass_byte).unwrap() ^ (240 >> bit_count); // 240 for 11110000
+        let n: u8 = given_password.get(cur_pass_byte).unwrap() ^ (t >> bit_count); // 240 for 11110000
         let tmp: u8;
 
         if next_rotation_left {
