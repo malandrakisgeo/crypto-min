@@ -3,7 +3,9 @@ An encryption/decryption program with an algorithm I came up on my own.
 It encrypts files based on successive rotations of their bytes.
 
 ## The algorithm
-The algorithm is designed to protect from frequency analysis and plain text attacks, by rotating bytes not only based on passwords, but based on their position in the file as well. Here is a verbal description of it:
+The algorithm is designed to hinder frequency analysis and plain text attacks, by rotating bytes 
+not only based on passwords, but based on their position in the file as well. 
+Here is a verbal description of it:
 
 1. The user gives an input and a password.
 2. The characters of the password are treated as u8, and successively
