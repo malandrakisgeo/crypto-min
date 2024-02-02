@@ -13,12 +13,12 @@ pub fn magic(given_password: &Vec<u8>, input: &Vec<u8>, t: &u8, encryption: bool
 
     let mut res_vec: Vec<u8> = Vec::new();
     let mid_nums = (t % 100) / 10;   //(r % 100) / 10 keeps only the "decades", e.g. 3 from 237, 7 from 171, etc
-    let last_digit = (t % 10);
+    let last_digit = t % 10;
     let magic_bool = initial_rotation(t.clone());
 
-    let initial_rotation_is_left: bool = if (encryption) { magic_bool } else { !magic_bool };
-    let how_many_left_rots = if (encryption) { last_digit } else { mid_nums };
-    let how_many_right_rots = if (encryption) { mid_nums } else { last_digit };
+    let initial_rotation_is_left: bool = if encryption { magic_bool } else { !magic_bool };
+    let how_many_left_rots = if encryption { last_digit } else { mid_nums };
+    let how_many_right_rots = if encryption { mid_nums } else { last_digit };
 
     let mut left_rot_counter = 0;
     let mut right_rot_counter = 0;
@@ -38,23 +38,23 @@ pub fn magic(given_password: &Vec<u8>, input: &Vec<u8>, t: &u8, encryption: bool
             right_rot_counter += 1;
         }
 
-        if (iter == 0) {
+        if iter == 0 {
             next_rotation_left = !next_rotation_left;
         }
 
-        if (right_rot_counter == how_many_right_rots) {
+        if right_rot_counter == how_many_right_rots {
             next_rotation_left = true;
             right_rot_counter = 0;
         }
 
-        if (left_rot_counter == how_many_left_rots) {
+        if left_rot_counter == how_many_left_rots {
             next_rotation_left = false;
             left_rot_counter = 0;
         }
 
         iter += 1;
 
-        if (bit_count == 6) {
+        if bit_count == 6 {
             bit_count = 0;
             cur_pass_byte += 1;
         } else {

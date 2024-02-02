@@ -36,12 +36,12 @@ fn main() {
 
 // T = first bit of password XOR last, if the password has an odd number of characters. Otherwise T = first_bit XNOR last_bit.
 pub fn calculate_T_value(given_password: &Vec<u8>) -> u8 {
-    let r = given_password.len();
+    let len = given_password.len();
     let mut t: u8 = 0;
 
 
     given_password.iter().for_each(|byte| {
-        if(given_password.len() % 2 == 0){
+        if(len % 2 == 0){
             t = t ^ byte;
         } else{
             t = !(t ^ byte);
