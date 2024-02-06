@@ -2,8 +2,10 @@ use std::{env, fs};
 use std::fs::File;
 use std::io::{Read, Write};
 use crate::encdec::magic;
+use crate::padding::{add_padding, remove_padding};
 
 mod encdec;
+mod padding;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -21,12 +23,22 @@ fn main() {
     let metadata = fs::metadata(path.clone()).expect("unable to read metadata");
     let mut buffer = vec![0; metadata.len() as usize];
      File::open(path.clone()).unwrap().read(&mut *buffer).expect("TODO: panic message");
-    let octades = buffer.to_vec();
+    let mut octades = buffer.to_vec();
 
 
     let passvec = Vec::from(pass);
     let t = calculate_T_value(&passvec);
-    let result_vector = magic(&passvec, &octades, &t, encrypt);
+    let mut result_vector: Vec<u8> = Vec::new();
+    if !encrypt{
+        octades = remove_padding(&passvec, &octades);
+         result_vector = magic(&passvec, &octades, &t, encrypt);
+    }
+
+
+    if encrypt{
+         result_vector = magic(&passvec, &octades, &t, encrypt);
+        result_vector = add_padding(&passvec, &result_vector);
+    }
 
     let mut f = File::create(cr_f_name).unwrap();
     f.write(&result_vector).expect("TODO: panic message");

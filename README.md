@@ -19,12 +19,27 @@ Here is a verbal description of it:
         i.e. We XOR the first char of the password with T, and use the resulting number of 1s to rotate the first char of the input.
              We XOR the second char of the password with T, and use the resulting number of 1s to rotate the second char of the input.
              e.t.c
-
+4. Padding is added (see algorithm below)
 TODO: If one encrypts plain text with this algorithm and the attackers know it, 
 it is trivial for them to brute force the first bytes and see if anything meaningful is produced, 
-possibly revealing the password if not complex enough. A form of password-derived padding shall be added periodically 
-in the textfile (total extra size no more than 5% of the original), including 
+possibly revealing the password if not complex enough. A form of password-derived padding shall be added aperiodically 
+in the textfile (total extra size no more than 10% of the original), including 
 the beginning and the end, and encrypted along with the rest of the file to make it harder to attack.
+
+
+Padding algorithm: 
+1. Generate N random bytes.
+2. Create a vector of size [input_size + N]. 
+3. The first  random byte will be placed at position P1=R1+1. The second random byte at position P2 = P1+R2. etc. 
+If some position is equal to or greater than the input size, we place the rest of the input bytes after the previous one and
+the rest of the random bytes will all be appended to the end of the file. 
+4. The beginning and the end of the file is padded with extra random bytes equal to the password length.
+
+N: 256 minimum, for small files. Otherwise 256 + (number_of_kbs * 64) + whatever needed to make it a multiply of 1024
+P1 / R1: (Passwords first byte AND 00000111), to let the first input byte alone). R2: Passwords second byte AND 00000111. Etc. 
+X: input_first_byte XOR T
+
+
 
 
 The algorithm has no official name, but if I had to give it one, that would be SYNTOM (from the Greek word 'syntomos' (=quick/brief) ). 

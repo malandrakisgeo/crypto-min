@@ -1,4 +1,3 @@
-use crate::calculate_T_value;
 
 fn initial_rotation(r: u8) -> bool { //TODO: Make it more complex
     return r < 200;
@@ -10,18 +9,17 @@ pub fn magic(given_password: &Vec<u8>, input: &Vec<u8>, t: &u8, encryption: bool
     let max_i = given_password.len();
     let mut bit_count = 0;
     let mut iter = 0;
-
     let mut res_vec: Vec<u8> = Vec::new();
     let mid_nums = (t % 100) / 10;   //(r % 100) / 10 keeps only the "decades", e.g. 3 from 237, 7 from 171, etc
     let last_digit = t % 10;
     let magic_bool = initial_rotation(t.clone());
 
     let initial_rotation_is_left: bool = if encryption { magic_bool } else { !magic_bool };
-    let how_many_left_rots = if encryption { last_digit } else { mid_nums };
-    let how_many_right_rots = if encryption { mid_nums } else { last_digit };
+    let how_many_left_rots: usize = if encryption { last_digit as usize } else { mid_nums as usize };
+    let how_many_right_rots: usize = if encryption { mid_nums as usize } else { last_digit as usize };
 
-    let mut left_rot_counter = 0;
-    let mut right_rot_counter = 0;
+    let mut left_rot_counter: usize = 0;
+    let mut right_rot_counter: usize = 0;
     let mut next_rotation_left = initial_rotation_is_left;
 
     println!("r: {}", t);
@@ -60,7 +58,7 @@ pub fn magic(given_password: &Vec<u8>, input: &Vec<u8>, t: &u8, encryption: bool
         } else {
             bit_count += 2;
         }
-        if (cur_pass_byte == max_i) {
+        if cur_pass_byte == max_i {
             cur_pass_byte = 0;
         }
         res_vec.push(tmp);
@@ -70,14 +68,15 @@ pub fn magic(given_password: &Vec<u8>, input: &Vec<u8>, t: &u8, encryption: bool
 }
 
 
+
 #[test]
 fn it_works() {
     let input = Vec::from("Encrypt me!");
     let pass = Vec::from("123");
-    let t = calculate_T_value(&pass);
+    let t = crate::calculate_T_value(&pass);
     let encrypted = magic(&pass, &input, &t, true);
     let decrypted = magic(&pass, &encrypted, &t, false);
     assert_ne!(input, encrypted);
     assert_eq!(input, decrypted);
-
 }
+
