@@ -91,7 +91,7 @@ fn determine_padding_size(input: usize) -> usize {
 
 fn determine_original_size(total_input: usize, password_length: usize) -> usize {
     let pad_s: usize;
-    let input = total_input - password_length;
+    let input = total_input - 2*password_length;
     if input <= 1024+256 {
         pad_s = input - 256;
     } else if input > 1024+512 && input <= 10240+512{
@@ -126,15 +126,21 @@ pub fn add_padding(given_password: &Vec<u8>, input: &Vec<u8>) -> Vec<u8> {
 
     let mut total_vec = get_combined_vector(&padding_bytes, &positions, &input);
     let mut pass_padd: Vec<u8> = Vec::new();
+    let mut pass_padd_end: Vec<u8> = Vec::new(); //if the padding is the same in the beginning and at the end, we give attackers the password length. 
+
     while i < given_password.len() {
-        let random_number: u8 = random();
+        let mut random_number: u8 = random();
         pass_padd.push(random_number);
+        random_number = random();
+        pass_padd_end.push(random_number);
         i += 1;
     }
 
     to_be_returned.append(&mut pass_padd);
 
     to_be_returned.append(&mut total_vec);
+
+    to_be_returned.append(&mut pass_padd_end);
 
     return to_be_returned;
 }
@@ -143,11 +149,13 @@ pub fn remove_padding(given_password: &Vec<u8>, input: &Vec<u8>) -> Vec<u8> {
     let mut to_be_returned: Vec<u8> = Vec::new();
     let mut positions: Vec<usize> = Vec::new();
     let mut i = 0;
-    let interesting = Vec::from(&input.as_slice()[given_password.len()..]);
+    let pass_length =  given_password.len();
+    let interesting = Vec::from(&input.as_slice()[pass_length..]);
 
-    let N = determine_original_size(input.len(), given_password.len());
+    let N = determine_original_size(input.len(), pass_length);
+    let pagging_length = input.len() - N - 2*pass_length;
 
-    positions = determine_padding_positions(&given_password, N, input.len() - N - given_password.len());
+    positions = determine_padding_positions(&given_password, N, pagging_length);
     let last_pos = positions.get(positions.len() -1 ).unwrap().clone();
     while i<last_pos {
         if !positions.contains(&i) {
@@ -175,7 +183,7 @@ fn padding() {
     let poss: Vec<usize> = determine_padding_positions(&pass, input.len(), determine_padding_size(input.len()));
 
     let res = add_padding(&pass, &encrypted);
-    assert_eq!(res.len(), 256 + pass.len() + input.len());
+    assert_eq!(res.len(), 256 + 2*pass.len() + input.len());
     let ress = remove_padding(&pass, &res);
     assert_eq!(ress.len(), input.len());
 }
